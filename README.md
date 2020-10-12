@@ -8,7 +8,7 @@ Model of an account service according to REST guidelines.
 
 ## Notes
 - Execute the tests one by one, they are sharing the same context, so the database may behave differently when executing all the tests at the same time.
-
+- Currency rates are dependent on external services, so availablity may be compromised.
 ## Endpoints
 
 ````
