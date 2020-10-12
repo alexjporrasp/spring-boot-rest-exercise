@@ -10,4 +10,5 @@ CREATE TABLE ACCOUNTS (
 
 INSERT INTO ACCOUNTS (id, name, currency, balance, treasury) VALUES
 ('65d251e0-0bfc-11eb-adc1-0242ac120002', 'Alice', 'USD', 100.0, TRUE),
-('824164ce-0bfc-11eb-adc1-0242ac120002', 'Bob', 'EUR', 20.0, FALSE);
+('824164ce-0bfc-11eb-adc1-0242ac120002', 'Bob', 'EUR', 20.0, FALSE),
+('9e4e0e28-0c9d-11eb-adc1-0242ac120002', 'Dani', 'EUR', 15.0, FALSE);

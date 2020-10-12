@@ -42,7 +42,24 @@ public class AccountController {
             accountService.addNewAccount(account);
         } catch (IllegalArgumentException ex) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Illegal Argument: " + ex.getMessage(), ex
+                    HttpStatus.BAD_REQUEST, ex.getMessage(), ex
+            );
+        }
+    }
+
+    @PutMapping("/transfer")
+    public void transferMoney(@RequestParam UUID originId,
+                              @RequestParam UUID targetId,
+                              @RequestParam double amount) {
+        try {
+            accountService.transferMoney(originId, targetId, amount);
+        } catch (NoSuchElementException ex) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, ex.getMessage(), ex
+            );
+        } catch (IllegalArgumentException ex) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, ex.getMessage(), ex
             );
         }
     }
