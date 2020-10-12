@@ -33,4 +33,17 @@ class RestExerciseApplicationTests {
 				.andExpect(content().json("[{\"accountId\":\"65d251e0-0bfc-11eb-adc1-0242ac120002\",\"name\":\"Alice\",\"currency\":\"USD\",\"balance\":100.0,\"treasury\":true},{\"accountId\":\"824164ce-0bfc-11eb-adc1-0242ac120002\",\"name\":\"Bob\",\"currency\":\"EUR\",\"balance\":20.0,\"treasury\":false}]"));
 	}
 
+	@Test
+	public void findAccountByIdOfExistingAccountIsOk() throws Exception {
+		mockMvc.perform(get("/api/accounts/65d251e0-0bfc-11eb-adc1-0242ac120002"))
+				.andExpect(status().isOk())
+				.andExpect(content().json("{\"accountId\":\"65d251e0-0bfc-11eb-adc1-0242ac120002\",\"name\":\"Alice\",\"currency\":\"USD\",\"balance\":100.0,\"treasury\":true}"));
+	}
+
+	@Test
+	public void findAccountByOfNonExistingAccountIdNotFound() throws Exception {
+		mockMvc.perform(get("/api/accounts/00000000-0000-0000-0000-000000000000"))
+				.andExpect(status().isNotFound());
+	}
+
 }
