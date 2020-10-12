@@ -67,6 +67,15 @@ class RestExerciseApplicationTests {
 	}
 
 	@Test
+	public void insertAccountWithUnsupportedCurrencyIsBadRequest() throws Exception {
+		mockMvc.perform(post("/api/accounts")
+				.content("{\"name\": \"Charlie\", \"currency\": \"AAA\", \"balance\": 100.0, \"treasury\": false}")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
 	public void transferMoneySameCurrencyHappyCase() throws Exception {
 		mockMvc.perform(put("/api/accounts/transfer")
 				.param("originId", "824164ce-0bfc-11eb-adc1-0242ac120002")

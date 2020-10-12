@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import javax.money.Monetary;
 import javax.money.MonetaryAmount;
+import javax.money.UnknownCurrencyException;
 import javax.money.convert.CurrencyConversion;
 import javax.money.convert.MonetaryConversions;
 import java.util.List;
@@ -36,7 +37,6 @@ public class AccountService {
         }
     }
 
-    // TODO(alexjporrasp): Check that currency is valid.
     public void addNewAccount(@NotNull Account account) {
         UUID newAccountId = UUID.randomUUID();
         if (!account.getTreasury() && account.getBalance() < 0) {
@@ -47,6 +47,13 @@ public class AccountService {
         if (Objects.isNull(account.getCurrency())) {
             throw new IllegalArgumentException(
                     "Currency must be specified"
+            );
+        }
+        try {
+            Monetary.getCurrency(account.getCurrency());
+        } catch (UnknownCurrencyException ex) {
+            throw new IllegalArgumentException(
+                    "Unsupported currency: " + account.getCurrency()
             );
         }
         accountDataAccessService.insertAccount(newAccountId, account);
