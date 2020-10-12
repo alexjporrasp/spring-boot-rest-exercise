@@ -22,6 +22,12 @@ public class AccountDataAccessService {
         return jdbcTemplate.query("SELECT * FROM ACCOUNTS", mapAccountFromDb());
     }
 
+    Account findAccountById(UUID accountId) {
+        return (Account) jdbcTemplate.queryForObject(
+                "SELECT * FROM ACCOUNTS WHERE id = ?",
+                new Object[]{accountId}, mapAccountFromDb());
+    }
+
     private RowMapper<Account> mapAccountFromDb() {
         return (resultSet, i) -> new Account(
                 UUID.fromString(resultSet.getString("id")),
