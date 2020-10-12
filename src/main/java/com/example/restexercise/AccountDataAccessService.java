@@ -1,5 +1,6 @@
 package com.example.restexercise;
 
+import com.sun.istack.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -26,6 +27,16 @@ public class AccountDataAccessService {
         return (Account) jdbcTemplate.queryForObject(
                 "SELECT * FROM ACCOUNTS WHERE id = ?",
                 new Object[]{accountId}, mapAccountFromDb());
+    }
+
+    int insertAccount(UUID accountId, @NotNull Account account) {
+        return jdbcTemplate.update(
+                "INSERT INTO accounts (id, name, currency, balance, treasury) VALUES (?, ?, ?, ?, ?)",
+                accountId,
+                account.getName(),
+                account.getCurrency(),
+                account.getBalance(),
+                account.getTreasury());
     }
 
     private RowMapper<Account> mapAccountFromDb() {

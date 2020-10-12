@@ -2,10 +2,7 @@ package com.example.restexercise;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -35,6 +32,18 @@ public class AccountController {
         } catch (NoSuchElementException ex) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "There is no account with id: " + accountId, ex);
+        }
+    }
+
+    // Content-Type must be set to application/json in Request header.
+    @PostMapping
+    public void addNewAccount(@RequestBody Account account) {
+        try {
+            accountService.addNewAccount(account);
+        } catch (IllegalArgumentException ex) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Illegal Argument: " + ex.getMessage(), ex
+            );
         }
     }
 }
