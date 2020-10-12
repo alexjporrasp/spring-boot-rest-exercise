@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,12 +32,26 @@ public class AccountDataAccessService {
 
     int insertAccount(UUID accountId, @NotNull Account account) {
         return jdbcTemplate.update(
-                "INSERT INTO accounts (id, name, currency, balance, treasury) VALUES (?, ?, ?, ?, ?)",
+                "INSERT INTO ACCOUNTS (id, name, currency, balance, treasury) VALUES (?, ?, ?, ?, ?)",
                 accountId,
                 account.getName(),
                 account.getCurrency(),
                 account.getBalance(),
                 account.getTreasury());
+    }
+
+    @Transactional
+    void transferMoney(UUID originId, UUID targetId, Double originNewBalance, Double targetNewBalance) {
+        jdbcTemplate.update(
+                "UPDATE ACCOUNTS SET balance = ? WHERE id = ?",
+                originNewBalance,
+                originId
+        );
+        jdbcTemplate.update(
+                "UPDATE ACCOUNTS SET balance = ? WHERE id = ?",
+                targetNewBalance,
+                targetId
+        );
     }
 
     private RowMapper<Account> mapAccountFromDb() {

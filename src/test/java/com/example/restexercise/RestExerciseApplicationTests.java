@@ -1,8 +1,7 @@
 package com.example.restexercise;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -32,7 +31,7 @@ class RestExerciseApplicationTests {
 	public void basePathShowsAllAccounts() throws Exception {
 		mockMvc.perform(get("/api/accounts"))
 				.andExpect(status().isOk())
-				.andExpect(content().json("[{\"accountId\":\"65d251e0-0bfc-11eb-adc1-0242ac120002\",\"name\":\"Alice\",\"currency\":\"USD\",\"balance\":100.0,\"treasury\":true},{\"accountId\":\"824164ce-0bfc-11eb-adc1-0242ac120002\",\"name\":\"Bob\",\"currency\":\"EUR\",\"balance\":20.0,\"treasury\":false}]"));
+				.andExpect(content().json("[{\"accountId\":\"65d251e0-0bfc-11eb-adc1-0242ac120002\",\"name\":\"Alice\",\"currency\":\"USD\",\"balance\":100.0,\"treasury\":true},{\"accountId\":\"824164ce-0bfc-11eb-adc1-0242ac120002\",\"name\":\"Bob\",\"currency\":\"EUR\",\"balance\":20.0,\"treasury\":false},{\"accountId\":\"9e4e0e28-0c9d-11eb-adc1-0242ac120002\",\"name\":\"Dani\",\"currency\":\"EUR\",\"balance\":15.0,\"treasury\":false}]"));
 	}
 
 	@Test
@@ -65,5 +64,48 @@ class RestExerciseApplicationTests {
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isBadRequest()
 		);
+	}
+
+	@Test
+	public void transferMoneySameCurrencyHappyCase() throws Exception {
+		mockMvc.perform(put("/api/accounts/transfer")
+				.param("originId", "824164ce-0bfc-11eb-adc1-0242ac120002")
+				.param("targetId", "9e4e0e28-0c9d-11eb-adc1-0242ac120002")
+				.param("amount", "2.50"))
+				.andExpect(status().isOk());
+	}
+
+	@Test
+	public void transferMoneySameCurrencyNotEnoughBalanceIsBadRequest() throws Exception {
+		mockMvc.perform(put("/api/accounts/transfer")
+				.param("originId", "824164ce-0bfc-11eb-adc1-0242ac120002")
+				.param("targetId", "9e4e0e28-0c9d-11eb-adc1-0242ac120002")
+				.param("amount", "100"))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	public void transferMoneyTreasuryNegativeBalanceIsOk() throws Exception {
+		mockMvc.perform(put("/api/accounts/transfer")
+				.param("originId", "65d251e0-0bfc-11eb-adc1-0242ac120002")
+				.param("targetId", "824164ce-0bfc-11eb-adc1-0242ac120002")
+				.param("amount", "1000"))
+				.andExpect(status().isOk());
+		mockMvc.perform(put("/api/accounts/transfer")
+				.param("originId", "65d251e0-0bfc-11eb-adc1-0242ac120002")
+				.param("targetId", "824164ce-0bfc-11eb-adc1-0242ac120002")
+				.param("amount", "1000"))
+				.andExpect(status().isOk());
+	}
+
+	@Test
+	// Since exchange rates change very often. To test the actual conversion
+	// it is needed to mock the currency conversion service.
+	public void transferMoneyDistinctCurrencyHappyCase() throws Exception {
+		mockMvc.perform(put("/api/accounts/transfer")
+				.param("originId", "65d251e0-0bfc-11eb-adc1-0242ac120002")
+				.param("targetId", "824164ce-0bfc-11eb-adc1-0242ac120002")
+				.param("amount", "20"))
+				.andExpect(status().isOk());
 	}
 }
