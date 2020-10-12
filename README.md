@@ -6,6 +6,9 @@ Model of an account service according to REST guidelines.
 - Accounts cannot be directly edited nor deleted. The requirements didn't explicitly state so.
 - I have chosen H2 as embedded database due to its simplicity.
 
+## Notes
+- Execute the tests one by one, they are sharing the same context, so the database may behave differently when executing all the tests at the same time.
+
 ## Endpoints
 
 ````
